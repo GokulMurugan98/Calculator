@@ -11,21 +11,49 @@ import UIKit
 class ViewController: UIViewController {
     
     @IBOutlet weak var displayLabel: UILabel!
+    private var calc = CalcLogic()
+    private var finishTyping:Bool = true
     
     
+    private var displayValue:Double {
+        get {
+            guard let number = Double(displayLabel.text!) else {
+                fatalError("Cannot convert lable to Double ")
+            }
+            return number
+        }
+        set{
+            displayLabel.text = "\(newValue)"
+        }
+        
+    }
     
     @IBAction func calcButtonPressed(_ sender: UIButton) {
+        finishTyping = true
+        calc.setNumber(number: displayValue)
         
-        //What should happen when a non-number button is pressed
-    
+        guard let result = calc.calculate(symbol: sender.currentTitle!) else {fatalError("The result was found nil")}
+        displayValue = result
+        
     }
-
+    
     
     @IBAction func numButtonPressed(_ sender: UIButton) {
         
-        //What should happen when a number is entered into the keypad
-    
+       
+        if let number = sender.currentTitle{
+            if finishTyping{
+                displayLabel.text = number
+                finishTyping = false
+            }else{
+                if number == "."{
+                    if !(floor(displayValue) == displayValue){
+                        return
+                    }
+                }
+                displayLabel.text! += number
+            }
+        }
     }
-
 }
 
